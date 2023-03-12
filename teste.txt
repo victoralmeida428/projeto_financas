@@ -1,0 +1,80 @@
+
+preco = clt.Antecedent(np.arange(0,41,1), 'preço')
+vol = clt.Antecedent(np.arange(0,1001,1), 'volume')
+dec = clt.Consequent(np.arange(0,1001,1), 'decisão')
+
+preco['barato'] = fuzz.gaussmf(preco.universe,10,5)
+preco['ideal'] = fuzz.gaussmf(preco.universe,20,5)
+preco['caro'] = fuzz.gaussmf(preco.universe,35,5)
+vol['baixo'] = fuzz.trapmf(vol.universe,[0,0,150,400])
+vol['ideal'] = fuzz.gaussmf(vol.universe,450,180)
+vol['alto'] = fuzz.trimf(vol.universe,[400,1000,1000])
+dec['comprar'] = fuzz.trapmf(dec.universe,[0,0,150,350])
+dec['manter'] = fuzz.trapmf(dec.universe,[300,400,600,700])
+dec['vender'] = fuzz.trapmf(dec.universe,[600,800,1000,1000])
+
+
+regra1 = clt.Rule(preco['barato'] & vol['baixo'], dec['comprar'])
+regra2 = clt.Rule(preco['barato'] & vol['alto'], dec['comprar'])
+regra3 = clt.Rule(preco['ideal'] & vol['baixo'], dec['comprar'])
+regra4 = clt.Rule(preco['ideal'] & vol['ideal'], dec['manter'])
+regra5 = clt.Rule(preco['ideal'] & vol['alto'], dec['vender'])
+regra6 = clt.Rule(preco['barato'] & vol['alto'], dec['vender'])
+
+decisao_clt = clt.ControlSystem([regra1, regra2, regra3, regra4, regra5, regra6])
+decisao = clt.ControlSystemSimulation(decisao_clt)
+
+def IndFzy(entrada):
+    decisao.input['preço'] = entrada[0]
+    decisao.input['volume'] = entrada[1]
+
+    decisao.compute()
+
+    return (decisao.output['decisão'])
+
+res1 = IndFzy([50,1000])
+dec.view(sim=decisao)
+
+print(res1)
+
+mval = []
+
+for t in dec.terms:
+    s = np.interp(res1, dec.universe, dec[t].mf)
+    mval.append([t, s])
+
+print(mval)
+
+mval = pd.DataFrame(mval)
+ind_max = mval[1].idxmax()
+print(f'--------------------------\n'
+        f'DECISÃO FINAL \n'
+        f'{mval[0][ind_max]} \n'
+        f'------------------------')
+
+input('')
+
+regra1 = clt.Rule(preco['barato'] & vol['baixo'], dec['comprar'])
+regra2 = clt.Rule(preco['barato'] & vol['alto'], dec['comprar'])
+regra3 = clt.Rule(preco['ideal'] & vol['baixo'], dec['comprar'])
+regra4 = clt.Rule(preco['ideal'] & vol['ideal'], dec['manter'])
+regra5 = clt.Rule(preco['ideal'] & vol['alto'], dec['vender'])
+regra6 = clt.Rule(preco['barato'] & vol['alto'], dec['vender'])'''
+
+
+
+yf.pdr_override()
+y_symbols = ['PETR4.SA']
+inicio = dt.datetime(2019,2,1)
+fim = dt.datetime(2022,12,1)
+data = pdr.get_data_yahoo(y_symbols, start=inicio, end=fim)
+
+data['Retorno'] = data['Close'].pct_change(21)*100
+
+data['Retorno'].plot(color ='black' )
+sns.regplot(data=data, x=data.index, y='Retorno')
+plt.axhline(0, color = 'r', linestyle = '-')
+
+plt.title('Ações PETR4.SA - Retorno mensal')
+plt.ylabel('Retorno %')
+plt.show()
