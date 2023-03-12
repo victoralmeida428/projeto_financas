@@ -46,13 +46,16 @@ def serie_model(data, serie, symbols=''):
      fig.update_layout(title_x=0.35)
      return fig
   if serie == 'Fronteira eficiente':
-     fin = Financias(symbol, inicio, fim)
-     fig, po = fin.fronteira()
-     table = pd.DataFrame(dict(Ação=symbol, Participação=po))
-     table['Participação'] = table['Participação'].apply(lambda x: f'{x:.2%}')
-           
-     st.table(table)
-     st.write(fig)
+    if len(symbol)>1:
+      fin = Financias(symbol, inicio, fim)
+      fig, po = fin.fronteira()
+      table = pd.DataFrame(dict(Ação=symbol, Participação=po))
+      table['Participação'] = table['Participação'].apply(lambda x: f'{x:.2%}')
+            
+      st.table(table)
+      st.write(fig)
+    else:
+      st.write('Favor escolher pelo menos 2 ativos')
 
 if len(symbol)>1:
   for s in symbol:
@@ -67,7 +70,8 @@ elif len(symbol) == 1:
   data['Tickers'] = symbol[0]
   st.write(serie_model(data, serie, symbol))
 else:
-  st.write('Nenhuma Ação Selecionada')
+  st.title(':green[**Project Finance**]')
+  st.write('Se você é um investidor, provavelmente já se perguntou qual é a melhor maneira de avaliar um ativo antes de investir nele. Felizmente, existem várias ferramentas que podem ajudá-lo nessa tarefa. Uma delas é a análise fundamentalista, que envolve a avaliação das condições financeiras e do desempenho da empresa em questão. Através dessa ferramenta, é possível obter informações sobre o fluxo de caixa, receita, lucro líquido e outros fatores que influenciam o valor do ativo.')
 
 
 

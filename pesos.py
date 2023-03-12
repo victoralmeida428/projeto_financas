@@ -82,7 +82,7 @@ class Financias:
         fig.add_trace(go.Scatter(x=risk, y=faixa_ret, name='Linha otimizada', line={'color':'green'}, mode='lines'))
         fig.add_annotation(text=f'<b>Ponto Ótimo<br>({vol_ot:.2f},{ret_ot:.2f})', 
                         xref='x', yref='y', ax=-60, ay=-40,
-                        x=vol_ot, y=ret_ot, showarrow=True, align='left', arrowcolor='green', font=dict(color='red', size=12))
+                        x=vol_ot, y=ret_ot, showarrow=True, align='left', arrowcolor='green', font=dict(color='green', size=12))
         fig.update_layout(title_x=0.5)
 
         pesos_otimos = outcomes['x']
