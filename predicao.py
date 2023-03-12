@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from pesos import Financias
 
+st.set_page_config(page_title='Finance Project', page_icon=":chart_with_upwards_trend:")
 def puxar_dados(s, start, end):
    yf.pdr_override()
    data = pdr.get_data_yahoo(s, start=start, end=end)
