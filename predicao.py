@@ -70,7 +70,7 @@ elif len(symbol) == 1:
   data['Tickers'] = symbol[0]
   st.write(serie_model(data, serie, symbol))
 else:
-  st.title(':green[**Project Finance**]')
+  st.title(':green[**Finance Project**]')
   st.write('Se você é um investidor, provavelmente já se perguntou qual é a melhor maneira de avaliar um ativo antes de investir nele. Felizmente, existem várias ferramentas que podem ajudá-lo nessa tarefa. Uma delas é a análise fundamentalista, que envolve a avaliação das condições financeiras e do desempenho da empresa em questão. Através dessa ferramenta, é possível obter informações sobre o fluxo de caixa, receita, lucro líquido e outros fatores que influenciam o valor do ativo.')
 
 
