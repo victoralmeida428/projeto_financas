@@ -7,6 +7,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 from pesos import Financias
+from pivottablejs import pivot_ui
 
 st.set_page_config(page_title='Finance Project', page_icon=":chart_with_upwards_trend:")
 def puxar_dados(s, start, end):
@@ -21,14 +22,15 @@ tbr = pd.read_csv('BR.csv')
 tbr = tbr.Symbol.tolist()
 tickers = tickers.Symbol.tolist()
 alltickers = tbr+tickers
-
 st.sidebar.title(':green[**Mercado Financeiro**]')
-inicio = st.sidebar.date_input('Inicio: ', )
-fim = st.sidebar.date_input('Fim: ', max_value=dt.datetime.now())
-
-symbol = st.sidebar.multiselect('Escolha as ações',options=alltickers)
-radio_opt = ['Série Histórica', 'Retorno Financeiro', 'Fronteira eficiente']
+radio_opt = ['Série Histórica', 'Retorno Financeiro', 'Fronteira eficiente', 'Simulação de Monte Carlo']
 serie = st.sidebar.selectbox('Modelo (R$)', options=radio_opt)
+inicio = st.sidebar.date_input('Inicio: ', value=dt.datetime(2020,1,1))
+fim = st.sidebar.date_input('Fim: ', max_value=dt.datetime.now()) 
+symbol = st.sidebar.multiselect('Escolha as ações',options=alltickers) if serie != 'Simulação de Monte Carlo' \
+  else  st.sidebar.selectbox('Escolha as ações',options=alltickers)
+
+
 dfs = list()
 
 def serie_model(data, serie, symbols=''):
@@ -56,6 +58,15 @@ def serie_model(data, serie, symbols=''):
       st.write(fig)
     else:
       st.write('Favor escolher pelo menos 2 ativos')
+  
+  if serie == 'Simulação de Monte Carlo':
+     col = st.columns(3)
+     with col[0]:
+      fim_sim = st.date_input('Data final da simulação', value=dt.datetime.now())
+     dados, fig = Financias(symbol, inicio, fim).monte_carlo(fim_sim)
+     with st.expander('Dados da Simulação'):
+          st.table(dados)
+     st.write(fig)
 
 if len(symbol)>1:
   for s in symbol:
@@ -65,6 +76,7 @@ if len(symbol)>1:
   df = pd.concat(dfs, ignore_index=False)
 
   st.write(serie_model(df, serie, symbol))
+  st.write(pivot_ui(df))
 elif len(symbol) == 1:
   data = puxar_dados(symbol, start=inicio, end=fim)
   data['Tickers'] = symbol[0]
