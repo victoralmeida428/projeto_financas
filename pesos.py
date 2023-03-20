@@ -114,7 +114,7 @@ class Financias:
         for j in range(1000):
             for i in range(len(prec)):
                 x[i,j] = np.random.normal(mi, sigma)
-        dados = pd.DataFrame(dict(dado=['Retorno', 'Retorno', 'Volatidade', 'Volatidade'], simulado=['Real', 'Simulado']*2,
+        dados = pd.DataFrame(dict(dado=['Retorno', 'Retorno', 'Volatilidade', 'Volatilidade'], simulado=['Real', 'Simulado']*2,
                                     valor=[f'{mi*len(prec):.3%}', f'{x.mean()*len(prec):.3%}', f'{sigma*len(prec):.2%}', f'{x.std()*len(prec):.2%}']))
         num = 100
         eixo = self.__range_date(fim)
